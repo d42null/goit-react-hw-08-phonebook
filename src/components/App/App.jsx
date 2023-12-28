@@ -1,35 +1,68 @@
-import { ContactsTitle, Container, Error, Title } from './App.styled';
-import { ContactForm } from 'components/ContactForm/ContacForm';
-import { ContactList } from 'components/ContactsList/ContactsList';
-import { Filter } from 'components/Filter/Filter';
-import { Toaster } from 'react-hot-toast';
-import { useDispatch, useSelector } from 'react-redux';
-import {
-  selectContacts,
-  selectError,
-  selectIsLoading,
-} from '../../redux/selectors';
+import { Route, Routes } from 'react-router-dom';
+import { Layout } from 'components/Layout/Layout';
+import { Login } from 'components/Login/Login';
+import { Register } from 'components/Register/Register';
+import { Contacts } from 'components/Contacts/Contacts';
 import { Loader } from 'components/Loader/Loader';
+import { useDispatch, useSelector } from 'react-redux';
 import { useEffect } from 'react';
-import { fetchContacts } from '../../redux/operations';
+import { refreshUser } from '../../redux/auth/operations';
+import { selectIsRefreshing } from '../../redux/auth/selectors';
+import { PrivateRoute } from 'components/PrivateRoute/PrivateRoute';
+import { RestrictedRoute } from 'components/RestrictedRoute/RestrictedRoute';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline';
+
+const darkTheme = createTheme({
+  palette: {
+    mode: 'dark',
+  },
+});
+
 export const App = () => {
-  const isLoading = useSelector(selectIsLoading);
-  const error = useSelector(selectError);
-  const contacts = useSelector(selectContacts);
-  const dispatch = useDispatch();
+  const dispach = useDispatch();
+  const isRefreshing = useSelector(selectIsRefreshing);
   useEffect(() => {
-    dispatch(fetchContacts());
-  }, [dispatch]);
+    dispach(refreshUser());
+  }, [dispach]);
   return (
-    <Container>
-      <Toaster position="top-right" reverseOrder={false} />
-      <Title>Phonebook</Title>
-      <ContactForm />
-      {contacts.length > 0 && <ContactsTitle>Contacts</ContactsTitle>}
-      {contacts.length > 0 && <Filter />}
-      {error && <Error>{error}</Error>}
-      {contacts.length > 0 && <ContactList />}
-      {isLoading && <Loader />}
-    </Container>
+    <ThemeProvider theme={darkTheme}>
+      <CssBaseline />
+      {isRefreshing ? (
+        <Loader />
+      ) : (
+        <Routes>
+          <Route path="/" element={<Layout />}>
+            <Route
+              index
+              element={
+                <RestrictedRoute redirectTo="/contacts" element={<Login />} />
+              }
+            />
+            <Route
+              path="/login"
+              element={
+                <RestrictedRoute redirectTo="/contacts" element={<Login />} />
+              }
+            />
+            <Route
+              path="/register"
+              element={
+                <RestrictedRoute
+                  redirectTo="/contacts"
+                  element={<Register />}
+                />
+              }
+            />
+            <Route
+              path="/contacts"
+              element={
+                <PrivateRoute redirectTo="/login" element={<Contacts />} />
+              }
+            />
+          </Route>
+        </Routes>
+      )}
+    </ThemeProvider>
   );
 };

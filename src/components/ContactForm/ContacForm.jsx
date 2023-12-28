@@ -1,7 +1,8 @@
-import { Button, FormContainer, Input, Label } from './ContactForm.styled';
 import { useDispatch, useSelector } from 'react-redux';
 import { addContact } from '../../redux/operations';
 import { selectContacts, selectIsLoading } from '../../redux/selectors';
+import { Box, Fab, Stack, TextField } from '@mui/material';
+import AddIcon from '@mui/icons-material/Add';
 export const ContactForm = () => {
   const contacts = useSelector(selectContacts);
   const isLoading = useSelector(selectIsLoading);
@@ -18,18 +19,47 @@ export const ContactForm = () => {
     e.target.reset();
   };
   return (
-    <FormContainer onSubmit={onSubmit}>
-      <Label>
-        Name
-        <Input type="text" name="name" required />
-      </Label>
-      <Label>
-        Number
-        <Input type="tel" name="number" required />
-      </Label>
-      <Button type="submit" disabled={isLoading}>
-        Add contact
-      </Button>
-    </FormContainer>
+    <Box
+      component="form"
+      sx={{
+        '& .MuiTextField-root': { m: 1, width: '25ch' },
+      }}
+      noValidate
+      autoComplete="off"
+      onSubmit={onSubmit}
+    >
+      <Stack spacing={1} direction="row">
+        <TextField
+          type="text"
+          name="name"
+          autoFocus
+          required
+          id="outlined-name"
+          label="Name"
+        />
+        <TextField
+          type="tel"
+          name="number"
+          required
+          id="outlined-number"
+          label="Number"
+        />
+        <Box
+          sx={{
+            pt: 2,
+          }}
+        >
+          <Fab
+            size="small"
+            color="primary"
+            aria-label="add contact"
+            type="submit"
+            disabled={isLoading}
+          >
+            <AddIcon />
+          </Fab>
+        </Box>
+      </Stack>
+    </Box>
   );
 };
