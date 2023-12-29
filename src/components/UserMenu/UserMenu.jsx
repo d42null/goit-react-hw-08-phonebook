@@ -10,13 +10,6 @@ export const UserMenu = () => {
   const { email } = useSelector(selectUser);
   return (
     <>
-      <IconButton
-        size="large"
-        aria-label="account of current user"
-        aria-controls="menu-appbar"
-        aria-haspopup="true"
-        color="inherit"
-      ></IconButton>
       <AccountCircle />
       <Typography textAlign="center">{email}</Typography>
       <IconButton
