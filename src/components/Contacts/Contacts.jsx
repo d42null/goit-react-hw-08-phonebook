@@ -11,6 +11,7 @@ import { Loader } from 'components/Loader/Loader';
 import { useEffect } from 'react';
 import { fetchContacts } from '../../redux/operations';
 import { Alert, Typography } from '@mui/material';
+import { Helmet } from 'react-helmet';
 
 export const Contacts = () => {
   const isLoading = useSelector(selectIsLoading);
@@ -22,6 +23,9 @@ export const Contacts = () => {
   }, [dispatch]);
   return (
     <>
+      <Helmet>
+        <title>Your Contacts</title>
+      </Helmet>
       <ContactForm />
       {contacts.length > 0 && (
         <Typography sx={{ mt: 4, mb: 2 }} variant="h6" component="div">
@@ -29,9 +33,7 @@ export const Contacts = () => {
         </Typography>
       )}
       {contacts.length > 0 && <Filter />}
-      {error && (
-        <Alert severity="error">{error}</Alert>
-      )}
+      {error && <Alert severity="error">{error}</Alert>}
       {contacts.length > 0 && <ContactList />}
       {isLoading && <Loader />}
     </>

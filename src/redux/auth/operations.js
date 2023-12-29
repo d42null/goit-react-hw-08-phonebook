@@ -20,7 +20,7 @@ export const register = createAsyncThunk(
       setToken(rsp.data.token);
       return rsp.data;
     } catch (e) {
-      return thunkAPI.rejectWithValue(e.message);
+      return thunkAPI.rejectWithValue(e.response?.data?.message ?? e.message);
     }
   }
 );
@@ -36,7 +36,7 @@ export const login = createAsyncThunk(
       setToken(rsp.data.token);
       return rsp.data;
     } catch (e) {
-      return thunkAPI.rejectWithValue(e.message);
+      return thunkAPI.rejectWithValue(e.response?.data?.message ?? e.message);
     }
   }
 );
